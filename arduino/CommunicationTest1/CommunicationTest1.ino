@@ -6,7 +6,7 @@ int led3 = 11;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(19200);
+  Serial.begin(9600);
   pinMode(led0, OUTPUT);
   pinMode(led1, OUTPUT);
   pinMode(led2, OUTPUT);
@@ -42,14 +42,14 @@ String read_input() {
   char data[19];
   
   while (Serial.available() <= 0 || Serial.read() != '{'){}
-  delay(6);
+  delay(12);
   while(Serial.available() >0) {
     char input = Serial.read();
 //    Serial.println("char="+input);
     if (input == '}'){break;}
     data[index] = input;
     index ++;
-    delayMicroseconds(120);
+    delay(5);
   }
   data[index] = '\0';
   Serial.print("data=");

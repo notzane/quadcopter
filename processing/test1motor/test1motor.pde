@@ -5,7 +5,7 @@ Serial send;
 void setup() {
   size(30,120);
   println(Serial.list());
-  send = new Serial(this, "/dev/tty.usbmodem1411", 9600);
+  send = new Serial(this, "/dev/tty.usbserial-A501B6YR", 9600);
 }
 
 void draw() {

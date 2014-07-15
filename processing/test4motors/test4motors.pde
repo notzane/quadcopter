@@ -14,7 +14,7 @@ void setup() {
   textFont(f,16);
   background(150);
   noStroke();
-  quadport = new Serial(this, "/dev/tty.usbmodem1411", 19200);
+  quadport = new Serial(this, "/dev/tty.usbserial-A501B6YR", 9600);
 }
 // xbee- /dev/tty.usbserial-A501B6YR
 
