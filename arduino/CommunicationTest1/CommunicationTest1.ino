@@ -49,7 +49,7 @@ String read_input() {
     if (input == '}'){break;}
     data[index] = input;
     index ++;
-    delay(5);
+    delay(4);
   }
   data[index] = '\0';
   Serial.print("data=");
