@@ -14,32 +14,21 @@ void setup() {
   textFont(f,16);
   background(150);
   noStroke();
+  textAlign(CENTER);
+  
 //  quadport = new Serial(this, "/dev/tty.usbserial-A501B6YR", 9600);
+//  quadport.write(send(power))  //send 40 right from the start
 }
 // xbee- /dev/tty.usbserial-A501B6YR
 
 
 void draw() {
-  fill(150);
-  rect(0,0,630,30);  //grey rect to cover words
-  fill(0);
-
-  for(int m = 0; m < 4; m++){  //grey rectangles
-    rect(30+150*m,30,120,240);
-  }
-  
-  for(int i = 0; i < 4; i++){  //words
-    text("motor "+Integer.toString(i)+" = "+power[i],30+150*i ,20);
-  }
-  
-  fill(255,0,0);
-  for(int j = 0; j < 4; j++){  //motor value rectangles
-    if(j==active || active==4){fill(255,0,0);}  //active ones are red
-    else{fill(155,0,0);}  //non-active ones are lighter
-    rect(30+150*j,270-power[j],120,power[j]);
-  }
-println(send(power));
-//quadport.write(send(power));
+  coverwords();
+  coverpower();
+  displayvalues();
+  powerbars();
+  fill(255);
+  text("sent data: "+send(power),315,290);
 }
 
 
@@ -86,3 +75,31 @@ void keyPressed() {
 //  quadport.write(send(power));
   }
 }
+
+void coverwords(){  //grey rect to cover words
+  fill(150);
+  rect(0,0,630,30);  //top
+  rect(0,270,630,30);//bottom
+}
+
+void coverpower(){
+  fill(0);
+  for(int m = 0; m < 4; m++){  //black rectangles
+    rect(30+150*m,30,120,240);
+  }
+}
+
+void displayvalues(){
+  for(int i = 0; i < 4; i++){  //words
+    text("motor "+Integer.toString(i)+" = "+power[i],90+150*i ,20);
+  }
+}
+
+void powerbars(){
+  for(int j = 0; j < 4; j++){  //motor value rectangles
+    if(j==active || active==4){fill(255,0,0);}  //active ones are red
+    else{fill(155,0,0);}  //non-active ones are lighter
+    rect(30+150*j,270-power[j],120,power[j]);
+  }
+}
+
