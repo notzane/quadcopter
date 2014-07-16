@@ -5,6 +5,8 @@ Serial quadport;
 int power[] = {40,40,40,40};
 int active = 4;
 
+String sending = send(power);
+
 PFont f;
 
 void setup() {
@@ -27,8 +29,6 @@ void draw() {
   coverpower();
   displayvalues();
   powerbars();
-  fill(255);
-  text("sent data: "+send(power),315,290);
 }
 
 
@@ -71,8 +71,9 @@ void keyPressed() {
         power[3]--;
       }
     }
-//    quadport.write(send(power));
-    println(send(power));
+    sending = send(power);
+//    quadport.write(sending);
+    println(sending);
   }
 }
 
@@ -90,9 +91,11 @@ void coverpower(){
 }
 
 void displayvalues(){
-  for(int i = 0; i < 4; i++){  //words
+  for(int i = 0; i < 4; i++){  //motor vals
     text("motor "+Integer.toString(i)+" = "+power[i],90+150*i ,20);
   }
+  fill(0,0,245);
+  text("sent data: "+sending,315,290);  //sent data
 }
 
 void powerbars(){
