@@ -52,27 +52,27 @@ void keyPressed() {
   if(key=='0' || key=='1' || key=='2' || key=='3' || key=='4'){
     active=Character.getNumericValue(key);
   }
-  else if(key==CODED & active!=4) {
-    if(keyCode==UP)
-    power[active]++;
-    else if(keyCode==DOWN)
-    power[active]--;
+  else if(key==CODED){  //arrow keys
+    if(active!=4) {  //all motors
+      if(keyCode==UP){power[active]++;}
+      else if(keyCode==DOWN){power[active]--;}
+    }
+    else if(active==4) {
+      if(keyCode==UP) {
+        power[0]++;
+        power[1]++;
+        power[2]++;
+        power[3]++;
+      }
+      else if(keyCode==DOWN) {
+        power[0]--;
+        power[1]--;
+        power[2]--;
+        power[3]--;
+      }
+    }
 //    quadport.write(send(power));
-  }
-  else if(key==CODED & active==4) {
-    if(keyCode==UP) {
-      power[0]++;
-      power[1]++;
-      power[2]++;
-      power[3]++;
-    }
-    else if(keyCode==DOWN) {
-      power[0]--;
-      power[1]--;
-      power[2]--;
-      power[3]--;
-    }
-//  quadport.write(send(power));
+    println(send(power));
   }
 }
 
