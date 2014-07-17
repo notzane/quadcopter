@@ -1,0 +1,24 @@
+Motor0:
+	Starts at 65
+	Stops at 64
+	Pin 5
+	Turns CCW
+	ESC CCW
+Motor1:
+	Starts at 65
+	Stops at 64
+	Pin 6
+	Turns CW
+	ESC CCW
+Motor2:
+	Starts at 47
+	Stops at 45
+	Pin 10
+	Turns CCW
+	ESC CCW
+Motor3:
+	Starts at 55
+	Stops at 53
+	Pin 11
+	Turns CW
+	ESC CCW

@@ -10,8 +10,8 @@ Servo brushless3;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  brushless0.attach(6);
-  brushless1.attach(9);
+  brushless0.attach(5);
+  brushless1.attach(6);
   brushless2.attach(10);
   brushless3.attach(11);
   
