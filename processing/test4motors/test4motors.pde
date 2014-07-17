@@ -18,7 +18,7 @@ void setup() {
   noStroke();
   textAlign(CENTER);
   
-//  quadport = new Serial(this, "/dev/tty.usbserial-A501B6YR", 9600);
+  quadport = new Serial(this, "/dev/tty.usbserial-A501B6YR", 9600);
 
   show();
 }
@@ -48,6 +48,14 @@ void keyPressed() {
   if(key=='0' || key=='1' || key=='2' || key=='3' || key=='4'){
     active=Character.getNumericValue(key);
   }
+  else if(key==' ') {
+    power[0] = 40;
+    power[1] = 40;
+    power[2] = 40;
+    power[3] = 40;
+    sending = send(power);
+    quadport.write(sending);
+  }
   else if(key==CODED){  //arrow keys
     if(active!=4) {  //all motors
       if(keyCode==UP){power[active]++;}
@@ -68,7 +76,7 @@ void keyPressed() {
       }
     }
     sending = send(power);
-//    quadport.write(sending);
+    quadport.write(sending);
     println(sending);
     show();
   }
