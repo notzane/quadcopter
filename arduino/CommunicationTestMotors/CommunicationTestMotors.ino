@@ -9,7 +9,7 @@ Servo brushless3;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(19200);
+  Serial.begin(9600);
   brushless0.attach(6);
   brushless1.attach(9);
   brushless2.attach(10);
@@ -50,14 +50,14 @@ String read_input() {
   char data[19];
   
   while (Serial.available() <= 0 || Serial.read() != '{'){}
-  delay(6);
-  while(Serial.available() >0) {
+  delay(12);
+  while(Serial.available()>0) {
     char input = Serial.read();
 //    Serial.println("char="+input);
     if (input == '}'){break;}
     data[index] = input;
     index ++;
-    delayMicroseconds(120);
+    delay(4);
   }
   data[index] = '\0';
   Serial.print("data=");
