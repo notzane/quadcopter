@@ -92,7 +92,7 @@ void coverpower(){
 
 void displayvalues(){
   for(int i = 0; i < 4; i++){  //motor vals
-    text("motor "+Integer.toString(i)+" = "+power[i],90+150*i ,20);
+    text("motor "+i+" = "+power[i],90+150*i ,20);
   }
   fill(0,0,245);
   text("sent data: "+sending,315,290);  //sent data
