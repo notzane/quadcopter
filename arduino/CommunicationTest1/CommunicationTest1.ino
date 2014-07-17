@@ -43,7 +43,7 @@ String read_input() {
   
   while (Serial.available() <= 0 || Serial.read() != '{'){}
   delay(12);
-  while(Serial.available() >0) {
+  while(Serial.available()>0) {
     char input = Serial.read();
 //    Serial.println("char="+input);
     if (input == '}'){break;}
