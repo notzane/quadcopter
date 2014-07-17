@@ -19,17 +19,13 @@ void setup() {
   textAlign(CENTER);
   
 //  quadport = new Serial(this, "/dev/tty.usbserial-A501B6YR", 9600);
-//  quadport.write(send(power))  //send 40 right from the start
+
+  show();
 }
 // xbee- /dev/tty.usbserial-A501B6YR
 
 
-void draw() {
-  coverwords();
-  coverpower();
-  displayvalues();
-  powerbars();
-}
+void draw() {}
 
 
 String send(int mVal[]) {
@@ -74,8 +70,17 @@ void keyPressed() {
     sending = send(power);
 //    quadport.write(sending);
     println(sending);
+    show();
   }
 }
+
+void show(){
+  coverwords();
+  coverpower();
+  displayvalues();
+  powerbars();
+}
+
 
 void coverwords(){  //grey rect to cover words
   fill(150);
