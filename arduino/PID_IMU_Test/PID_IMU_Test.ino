@@ -8,8 +8,25 @@
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 #include "Wire.h"
+#include <PID_v1.h>
+#include <Servo.h>
 
 MPU6050 mpu;
+
+    int pitchVal0;
+    int pitchVal1;
+    int pitchVal2;
+    int pitchVal3;
+    
+    int finalVal0;
+    int finalVal1;
+    int finalVal2;
+    int finalVal3;
+    
+    int motor0;
+    int motor1;
+    int motor2;
+    int motor3;
 
 // Yaw/pitch/roll angles (in degrees) calculated from the quaternions coming
 // from the FIFO. Note this also requires gravity vector calculations.
@@ -42,12 +59,34 @@ void dmpDataReady() {
     mpuInterrupt = true;
 }
 
+double pSetpoint, pInput, pOutput;
+double rSetpoint, rInput, rOutput;
+
+PID pitchPID(&pInput, &pOutput, &pSetpoint, 10, 0, 0, DIRECT);
+PID rollPID(&rInput, &rOutput, &rSetpoint, 10, 0, 0, DIRECT);
+
+Servo brushless0;
+Servo brushless1;
+Servo brushless2;
+Servo brushless3;
+
 // ================================================================
 // ===                      INITIAL SETUP                       ===
 // ================================================================
 
 void setup() {
-    Serial.begin(28800);
+    brushless0.attach(5);
+    brushless1.attach(6);
+    brushless2.attach(10);
+    brushless3.attach(11);
+  
+    brushless0.write(40);
+    brushless1.write(40);
+    brushless2.write(40);
+    brushless3.write(40);
+    
+    delay(2000);
+    Serial.begin(9600);
     // join I2C bus (I2Cdev library doesn't do this automatically)
     Wire.begin();
     TWBR = 24; // 400kHz I2C clock (200kHz if CPU is 8MHz)
@@ -59,12 +98,6 @@ void setup() {
     // verify connection
     Serial.println(F("Testing device connections..."));
     Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
-
-    // wait for ready
-    Serial.println(F("\nSend any character to begin DMP programming and demo: "));
-    while (Serial.available() && Serial.read()); // empty buffer
-    while (!Serial.available());                 // wait for data
-    while (Serial.available() && Serial.read()); // empty buffer again
     
     // load and configure the DMP
     Serial.println(F("Initializing DMP..."));
@@ -96,6 +129,17 @@ void setup() {
         Serial.print(devStatus);
         Serial.println(F(")"));
     }
+    
+    pSetpoint = -0.18;
+    pInput = -0.18;
+    pitchPID.SetMode(AUTOMATIC);
+    pitchPID.SetOutputLimits(-10, 10);
+    
+    rSetpoint = -0.03;
+    rInput = -0.03;
+    rollPID.SetMode(AUTOMATIC);
+    rollPID.SetOutputLimits(-10, 10);
+    
 }
 
 // ================================================================
@@ -103,6 +147,27 @@ void setup() {
 // ================================================================
 
 void loop() {
+  
+    Serial.print(pOutput);
+    Serial.print("\t");
+    Serial.println(rOutput);
+    
+    pitchVal0 = motor0 + round(pOutput);
+    pitchVal1 = motor1 + round(pOutput);
+    pitchVal2 = motor2 - round(pOutput);
+    pitchVal3 = motor3 - round(pOutput);
+    
+    finalVal0 = pitchVal0 - round(rOutput);
+    finalVal1 = pitchVal1 + round(rOutput);
+    finalVal2 = pitchVal2 + round(rOutput);
+    finalVal3 = pitchVal3 - round(rOutput);
+     
+    brushless0.write(finalVal0);
+    brushless1.write(finalVal1);
+    brushless2.write(finalVal2);
+    brushless3.write(finalVal3);
+    
+    
     // if programming failed, don't try to do anything
     if (!dmpReady) return;
 
@@ -150,11 +215,73 @@ void loop() {
         mpu.dmpGetQuaternion(&q, fifoBuffer);
         mpu.dmpGetGravity(&gravity, &q);
         mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-        Serial.print("ypr\t");
-        Serial.print(ypr[0]);
-        Serial.print("\t");
-        Serial.print(ypr[1]);
-        Serial.print("\t");
-        Serial.println(ypr[2]);
     }
+    pInput = ypr[1];
+    pitchPID.Compute();
+    rInput = ypr[2];
+    rollPID.Compute();
+    
+    String input = "BLAH!";
+    Serial.println("Reading input...");
+    Serial.println(ypr[2]);
+    input = read_input();
+    if(input==""){continue;}
+    Serial.print("Input read: ");
+    Serial.print(input);
+    Serial.println("\t");
+    
+    motor0 = motorValue(input, 0);
+    motor1 = motorValue(input, 1);
+    motor2 = motorValue(input, 2);
+    motor3 = motorValue(input, 3);
+    
+
+
 }
+
+
+String read_input() {
+  int index = 0;
+  char data[19];
+  Serial.println("DEBUG1");
+  
+  if (Serial.available() <= 0 || Serial.read() != '{'){return ""}
+  delay(12);
+  while(Serial.available()>0) {
+    char input = Serial.read();
+//    Serial.println("char="+input);
+    if (input == '}'){break;}
+    data[index] = input;
+    index ++;
+    delay(4);
+  }
+  data[index] = '\0';
+  Serial.print("data=");
+  Serial.print(data);
+  Serial.println("");
+  return String(data);
+}
+
+int motorValue(String inputData, int motorNumber) {
+  int placeHolder = -1;
+  
+  switch (motorNumber) {
+    case 0:
+      placeHolder = 0;
+      break;
+    case 1:
+      placeHolder = 4;
+      break;
+    case 2:
+      placeHolder = 8;
+      break;
+    case 3:
+      placeHolder = 12;
+      break;
+  }
+  String val = inputData.substring(placeHolder, placeHolder+3);
+  return val.toInt();
+  Serial.println(val.toInt());
+}
+
+  

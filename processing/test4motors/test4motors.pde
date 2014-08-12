@@ -18,7 +18,7 @@ void setup() {
   noStroke();
   textAlign(CENTER);
   
-  quadport = new Serial(this, "/dev/tty.usbserial-A501B6YR", 9600);
+  quadport = new Serial(this, "/dev/tty.usbmodem1421", 14400);
 
   show();
 }
