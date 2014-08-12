@@ -1,0 +1,3 @@
+base values (+/- .3 or so)
+	pitch  	-9.2
+	roll 	-1.86
