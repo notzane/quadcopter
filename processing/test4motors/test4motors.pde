@@ -2,8 +2,8 @@ import processing.serial.*;
 
 Serial quadport;
 
-int power[] = {40,40,40,40};
-int active = 4;
+int power[] = {61,61,43,51};
+int active  = 4;
 
 String sending = send(power);
 
@@ -18,7 +18,7 @@ void setup() {
   noStroke();
   textAlign(CENTER);
   
-  quadport = new Serial(this, "/dev/tty.usbmodem1421", 14400);
+  quadport = new Serial(this, "/dev/tty.usbserial-A501B6YR", 9600);
 
   show();
 }

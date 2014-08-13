@@ -47,7 +47,7 @@ void dmpDataReady() {
 // ================================================================
 
 void setup() {
-    Serial.begin(28800);
+    Serial.begin(115200);
     // join I2C bus (I2Cdev library doesn't do this automatically)
     Wire.begin();
     TWBR = 24; // 400kHz I2C clock (200kHz if CPU is 8MHz)
