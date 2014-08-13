@@ -13,20 +13,20 @@
 
 MPU6050 mpu;
 
-    int pitchVal0;
-    int pitchVal1;
-    int pitchVal2;
-    int pitchVal3;
-    
-    int finalVal0;
-    int finalVal1;
-    int finalVal2;
-    int finalVal3;
-    
-    int motor0;
-    int motor1;
-    int motor2;
-    int motor3;
+int pitchVal0;
+int pitchVal1;
+int pitchVal2;
+int pitchVal3;
+
+int finalVal0;
+int finalVal1;
+int finalVal2;
+int finalVal3;
+
+int motor0;
+int motor1;
+int motor2;
+int motor3;
 
 // Yaw/pitch/roll angles (in degrees) calculated from the quaternions coming
 // from the FIFO. Note this also requires gravity vector calculations.
@@ -62,8 +62,8 @@ void dmpDataReady() {
 double pSetpoint, pInput, pOutput;
 double rSetpoint, rInput, rOutput;
 
-PID pitchPID(&pInput, &pOutput, &pSetpoint, 10, 0, 0, DIRECT);
-PID rollPID(&rInput, &rOutput, &rSetpoint, 10, 0, 0, DIRECT);
+PID pitchPID(&pInput, &pOutput, &pSetpoint, 4, 0, 0, DIRECT);
+PID rollPID(&rInput, &rOutput, &rSetpoint, 4, 0, 0, DIRECT);
 
 Servo brushless0;
 Servo brushless1;
@@ -130,13 +130,13 @@ void setup() {
         Serial.println(F(")"));
     }
     
-    pSetpoint = -0.18;
-    pInput = -0.18;
+    pSetpoint = -.23;
+    pInput = -.23;
     pitchPID.SetMode(AUTOMATIC);
     pitchPID.SetOutputLimits(-10, 10);
     
-    rSetpoint = -0.03;
-    rInput = -0.03;
+    rSetpoint = -0.04;
+    rInput = -0.04;
     rollPID.SetMode(AUTOMATIC);
     rollPID.SetOutputLimits(-10, 10);
     
@@ -147,7 +147,14 @@ void setup() {
 // ================================================================
 
 void loop() {
-  
+  while(true){ //loop that we can continue out of
+    String input = "";
+    
+    Serial.print(pInput);
+    Serial.print("\t");
+    Serial.println(rInput);
+
+
     Serial.print(pOutput);
     Serial.print("\t");
     Serial.println(rOutput);
@@ -163,9 +170,9 @@ void loop() {
     finalVal3 = pitchVal3 - round(rOutput);
      
     brushless0.write(finalVal0);
-    brushless1.write(finalVal1);
+    //brushless1.write(finalVal1);
     brushless2.write(finalVal2);
-    brushless3.write(finalVal3);
+    //brushless3.write(finalVal3);
     
     
     // if programming failed, don't try to do anything
@@ -220,12 +227,11 @@ void loop() {
     pitchPID.Compute();
     rInput = ypr[2];
     rollPID.Compute();
-    
-    String input = "BLAH!";
+   
     Serial.println("Reading input...");
-    Serial.println(ypr[2]);
     input = read_input();
     if(input==""){continue;}
+
     Serial.print("Input read: ");
     Serial.print(input);
     Serial.println("\t");
@@ -234,31 +240,31 @@ void loop() {
     motor1 = motorValue(input, 1);
     motor2 = motorValue(input, 2);
     motor3 = motorValue(input, 3);
-    
-
-
+  }
 }
 
 
 String read_input() {
   int index = 0;
   char data[19];
-  Serial.println("DEBUG1");
   
-  if (Serial.available() <= 0 || Serial.read() != '{'){return ""}
+  if (Serial.available() <= 0 || Serial.read() != '{'){return "";}
   delay(12);
   while(Serial.available()>0) {
     char input = Serial.read();
-//    Serial.println("char="+input);
+    Serial.println("char="+input);
     if (input == '}'){break;}
     data[index] = input;
     index ++;
     delay(4);
   }
   data[index] = '\0';
+
   Serial.print("data=");
   Serial.print(data);
   Serial.println("");
+
+
   return String(data);
 }
 
