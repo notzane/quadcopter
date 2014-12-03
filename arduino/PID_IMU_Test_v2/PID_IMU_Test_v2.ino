@@ -43,8 +43,8 @@ double pSetpoint, pInput, pOutput;
 double rSetpoint, rInput, rOutput;
 
 //Input vars into PID algorithm
-PID pitchPID(&pInput, &pOutput, &pSetpoint, 2, 1, 0.1, DIRECT);
-PID rollPID(&rInput, &rOutput, &rSetpoint, 2, 1, 0.1, DIRECT);
+PID pitchPID(&pInput, &pOutput, &pSetpoint, 0.005, 0, 0, DIRECT);
+PID rollPID(&rInput, &rOutput, &rSetpoint, 0.005, 0, 0, DIRECT);
 
 float pOffset;
 float rOffset;
@@ -115,14 +115,14 @@ void setup() {
         Serial.print(devStatus);
         Serial.println(F(")"));
     } 
-    
-    pSetpoint = -0.23;
-    pInput = -0.23;
+    //-0.23 in rad
+    pSetpoint = -13.18;
+    pInput = -13.18;
     pitchPID.SetMode(AUTOMATIC);
     pitchPID.SetOutputLimits(-100, 100);
-    
-    rSetpoint = -0.03;
-    rInput = -0.03;
+    //-0.03 in rad
+    rSetpoint = -1.72;
+    rInput = -1.72;
     rollPID.SetMode(AUTOMATIC);
     rollPID.SetOutputLimits(-100, 100);
 }
@@ -135,9 +135,10 @@ void loop() {
     getypr();
     pOffset = getPitchPID();
     rOffset = getRollPID();
+    //absOffset was + 40
     absOffset = motorVal() + 40;
 
-    //Serial.println(absOffset);
+    Serial.println(absOffset);
     
 
     
@@ -185,13 +186,13 @@ void getypr() {
 }
 
 float getPitchPID() {
-    pInput = ypr[1];
+    pInput = (180/PI)*ypr[1];
     pitchPID.Compute();
     return pOutput;
 }
 
 float getRollPID() {
-    rInput = ypr[2];
+    rInput = (180/PI)*ypr[2];
     rollPID.Compute();
     return rOutput;
 }
@@ -204,16 +205,17 @@ String read_input() {
         getypr();
         pOffset = getPitchPID();
         rOffset = getRollPID();
-        //Serial.print("r: "); Serial.print(rOffset);
-        //Serial.print("\t p: "); Serial.println(pOffset);
+        Serial.print("r: "); Serial.print(rOffset);
+        Serial.print("\t p: "); Serial.println(pOffset);
         
-    brushless0.write(absOffset - pOffset + rOffset);
-    brushless1.write(absOffset - pOffset - rOffset +3);
-    brushless2.write(absOffset + pOffset - rOffset);
-    brushless3.write(absOffset + pOffset + rOffset);
+        brushless0.write(absOffset - pOffset + rOffset + 16);
+        //Used to have +3 on brush1
+        brushless1.write(absOffset - pOffset - rOffset + 17);
+        brushless2.write(absOffset + pOffset - rOffset);
+        brushless3.write(absOffset + pOffset + rOffset + 6);
     }
     delay(5);
-    while(Serial.available()>0) {
+    while(Serial.available() > 0) {
         char input = Serial.read();
         //Serial.println("char=" + input);
         if (input == '}') {
