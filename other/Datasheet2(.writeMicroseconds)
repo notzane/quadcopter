@@ -1,0 +1,8 @@
+{00f0l0}
+r: -0.18	 p: 0.29{09f0l0}
+r: 0.60	 p: -0.16{10f0l0}
+fluc:
+r: 0.38	 p: -0.18r: 1.26	 p: -0.26steady:r: 1.45	 p: -0.18starts to life at 38-40
+
+
+.writeMicroseconds(1032)
