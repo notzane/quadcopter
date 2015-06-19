@@ -1,24 +1,27 @@
+(4 motors, abstract control)
 Motor0:
-	Starts at 65
-	Stops at 64
+	Starts at 65, 214
+	MicroStarts at 
+	Stops at 64, 209
+
 	Pin 5
 	Turns CCW
 	ESC CCW
 Motor1:
-	Starts at 65
-	Stops at 64
+	Starts at 65, 207
+	Stops at 64, 206
 	Pin 6
 	Turns CW
 	ESC CCW
 Motor2:
-	Starts at 47
-	Stops at 45
+	Starts at 47, 30
+	Stops at 45, 19
 	Pin 10
 	Turns CCW
 	ESC CCW
 Motor3:
-	Starts at 55
-	Stops at 53
+	Starts at 55, 101
+	Stops at 53, 95
 	Pin 11
 	Turns CW
 	ESC CCW

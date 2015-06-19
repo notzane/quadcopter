@@ -44,12 +44,20 @@ double pSetpoint, pInput, pOutput;
 double rSetpoint, rInput, rOutput;
 
 //Input vars into PID algorithm
-PID pitchPID(&pInput, &pOutput, &pSetpoint, 10, 0, 0, DIRECT);
-PID rollPID(&rInput, &rOutput, &rSetpoint, 10, 0, 0, DIRECT);
+PID pitchPID(&pInput, &pOutput, &pSetpoint, 1, 0, 0, DIRECT);
+PID rollPID(&rInput, &rOutput, &rSetpoint, 1, 0, 0, DIRECT);
 
 float pOffset;
 float rOffset;
 int absOffset;
+
+//Each motor starts at a different value. This makes them start around the same
+//A buffer of around 30
+int motor0Offset = 0;
+int motor1Offset = 0;
+int motor2Offset = 0;
+int motor3Offset = 0;
+
 
 Servo brushless0;
 Servo brushless1;
@@ -70,6 +78,7 @@ void setup() {
     brushless1.write(40);
     brushless2.write(40);
     brushless3.write(40);
+
     delay(2000);
     Serial.begin(9600);
     //Join I2C bus (I2Cdev library doesn't do this automatically)
@@ -116,14 +125,23 @@ void setup() {
         Serial.print(devStatus);
         Serial.println(F(")"));
     } 
+    //set pid initial setpoints
+    getypr();
+    Serial.println("ypr1");
+
+    //delay(15000);
+    Serial.println("wait is over");    
+
+    getypr();
     //-0.23 in rad
-    pSetpoint = -13.18;
-    pInput = -13.18;
+    pSetpoint = -10.80;
+    Serial.println(pSetpoint);
+    pInput = (180/PI)*ypr[1];
     pitchPID.SetMode(AUTOMATIC);
     pitchPID.SetOutputLimits(-200, 200);
     //-0.03 in rad
-    rSetpoint = -1.72;
-    rInput = -1.72;
+    rSetpoint = -0.57;
+    rInput = (180/PI)*ypr[2];
     rollPID.SetMode(AUTOMATIC);
     rollPID.SetOutputLimits(-200, 200);
 }
@@ -209,11 +227,11 @@ String read_input() {
         Serial.print("r: "); Serial.print(rOffset);
         Serial.print("\t p: "); Serial.println(pOffset);
         
-        brushless0.writeMicroseconds(absOffset - pOffset + rOffset);
+        brushless0.writeMicroseconds(absOffset + motor0Offset - pOffset + rOffset);
         //Used to have 16, 16, 0, 6
-        brushless1.writeMicroseconds(absOffset - pOffset - rOffset);
-        brushless2.writeMicroseconds(absOffset + pOffset - rOffset);
-        brushless3.writeMicroseconds(absOffset + pOffset + rOffset);
+        brushless1.writeMicroseconds(absOffset + motor1Offset - pOffset - rOffset);
+        brushless2.writeMicroseconds(absOffset + motor2Offset + pOffset - rOffset);
+        brushless3.writeMicroseconds(absOffset + motor3Offset + pOffset + rOffset);
     }
     delay(5);
     while(Serial.available() > 0) {

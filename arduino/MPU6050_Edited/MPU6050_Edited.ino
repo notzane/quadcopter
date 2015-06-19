@@ -153,8 +153,8 @@ void loop() {
         Serial.print("ypr\t");
         Serial.print(ypr[0]);
         Serial.print("\t");
-        Serial.print(ypr[1]);
+        Serial.print((180/PI)*ypr[1]);
         Serial.print("\t");
-        Serial.println(ypr[2]);
+        Serial.println((180/PI)*ypr[2]);
     }
 }

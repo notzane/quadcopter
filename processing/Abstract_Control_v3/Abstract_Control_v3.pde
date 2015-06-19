@@ -14,7 +14,7 @@ void setup() {
   size(640, 320);
   textAlign(CENTER);
 
-  quadport = new Serial(this, "/dev/tty.usbmodem1421", 9600);
+  quadport = new Serial(this, "/dev/tty.usbmodem1411", 9600);
 }
 
 void draw() {
@@ -118,6 +118,9 @@ void keyPressed() {
   }
   else if (key == 'a') {
     throttle -= 10;
+  }
+  else if (key == ' ') {
+    throttle = 0;
   }
   //Limits range of throttle and direction
   if (forBack > 9) {forBack = 9;}
