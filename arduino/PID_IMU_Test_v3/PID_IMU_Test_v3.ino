@@ -51,12 +51,11 @@ float pOffset;
 float rOffset;
 int absOffset;
 
-//Each motor starts at a different value. This makes them start around the same
-//A buffer of around 30
-int motor0Offset = 0;
-int motor1Offset = 0;
-int motor2Offset = 0;
-int motor3Offset = 0;
+//based off the range of the motors as a ratio to motor 2
+float motor0Offset = .91;
+float motor1Offset = .93;
+float motor2Offset = 1;
+float motor3Offset = .88;
 
 
 Servo brushless0;
@@ -155,7 +154,7 @@ void loop() {
     pOffset = getPitchPID();
     rOffset = getRollPID();
     //absOffset was + 40
-    absOffset = motorVal() + 1000;
+    absOffset = motorVal();
 
     Serial.println(absOffset);
     
@@ -226,12 +225,16 @@ String read_input() {
         rOffset = getRollPID();
         Serial.print("r: "); Serial.print(rOffset);
         Serial.print("\t p: "); Serial.println(pOffset);
+
+        int motor0Val = (absOffset - pOffset + rOffset) *  motor0Offset + 1000; //motor values start at 1000
+        int motor1Val = (absOffset - pOffset - rOffset) *  motor1Offset + 1000;
+        int motor2Val = (absOffset + pOffset - rOffset) *  motor2Offset + 1000;
+        int motor3Val = (absOffset + pOffset + rOffset) *  motor3Offset + 1000;
         
-        brushless0.writeMicroseconds(absOffset + motor0Offset - pOffset + rOffset);
-        //Used to have 16, 16, 0, 6
-        brushless1.writeMicroseconds(absOffset + motor1Offset - pOffset - rOffset);
-        brushless2.writeMicroseconds(absOffset + motor2Offset + pOffset - rOffset);
-        brushless3.writeMicroseconds(absOffset + motor3Offset + pOffset + rOffset);
+        brushless0.writeMicroseconds(motor0Val);
+        brushless1.writeMicroseconds(motor1Val);
+        brushless2.writeMicroseconds(motor2Val);
+        brushless3.writeMicroseconds(motor3Val);
     }
     delay(5);
     while(Serial.available() > 0) {

@@ -10,11 +10,13 @@ char fOrB = 'f';
 int lefRight = 0;
 char lOrR = 'l';
 
+String port = "/dev/tty.usbserial-A501B6YR"; // /dev/tty.usbmodem1411";
+
 void setup() {
   size(640, 320);
   textAlign(CENTER);
 
-  quadport = new Serial(this, "/dev/tty.usbmodem1411", 9600);
+  quadport = new Serial(this, port, 9600);
 }
 
 void draw() {
@@ -121,6 +123,9 @@ void keyPressed() {
   }
   else if (key == ' ') {
     throttle = 0;
+  }
+  else if (key == 'k') { //launch
+    throttle = 550;
   }
   //Limits range of throttle and direction
   if (forBack > 9) {forBack = 9;}
